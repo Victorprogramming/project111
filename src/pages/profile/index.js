@@ -1,6 +1,6 @@
 import "./style.css";
 import { observer } from "mobx-react";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useParams } from "react-router-dom";
 import { useStore } from "../../store/store";
 import profile from "../../images/profile.png";
 import trash from "../../images/trash.png";
