@@ -1,13 +1,13 @@
 import "./style.css";
 import { observer } from "mobx-react";
 import { useStore } from "../../store/store";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, withRouter } from "react-router-dom";
 
 const Header = () => {
   const store = useStore();
   const { user } = store;
   const { pathname } = useLocation();
-  const { userId } = useParams();
+
   return (
     <>
       <Link to="/" className={`tablink ${pathname === "/" ? "active" : ""}`}>
@@ -23,7 +23,7 @@ const Header = () => {
         <Link
           to={`/profile/${user.uid}`}
           className={`tablink ${
-            pathname === "/profile" && userId === user.uid ? "active" : ""
+            pathname === `/profile/${user.uid}` ? "active" : ""
           }`}
         >
           {user.email}

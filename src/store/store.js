@@ -6,16 +6,112 @@ import { firebaseConfig } from "../utils/configs";
 class Store {
   constructor() {
     firebase.initializeApp(firebaseConfig);
-    this.database = firebase.database();
+    this.database = firebase.firestore();
     this.auth = firebase.auth();
     makeAutoObservable(this);
 
     this.auth.onAuthStateChanged((user) => {
-      this.user = user ? user : this.user === undefined ? null : undefined;
+      runInAction(() => {
+        this.user = user ? user : this.user === undefined ? null : undefined;
+      });
     });
   }
 
   user = null;
+
+  homeData = [];
+  loadHomeData = () => {
+    this.database
+      .collection("puppies")
+      .orderBy("timestamp", "desc")
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.homeData = docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        });
+      });
+  };
+
+  loadingOlder = false;
+  loadOlderHomeData = () => {
+    if (this.loadingOlder) {
+      return;
+    }
+
+    runInAction(() => (this.loadingOlder = true));
+    this.database
+      .collection("puppies")
+      .orderBy("timestamp", "desc")
+      .startAfter(this.homeData[this.homeData.length - 1].timestamp)
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.homeData = this.homeData.concat(
+            docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+          );
+          this.loadingOlder = false;
+        });
+      });
+  };
+
+  profileData = [];
+  loadProfileData = (id) => {
+    this.database
+      .collection("puppies")
+      .where("owner", "==", id)
+      .orderBy("timestamp", "desc")
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.profileData = docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        });
+      });
+  };
+
+  loadingOlderProfile = false;
+  loadOlderProfileData = (id) => {
+    if (this.loadingOlderProfile) {
+      return;
+    }
+
+    runInAction(() => (this.loadingOlderProfile = true));
+    this.database
+      .collection("puppies")
+      .where("owner", "==", id)
+      .orderBy("timestamp", "desc")
+      .startAfter(this.profileData[this.profileData.length - 1].timestamp)
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.profileData = this.profileData.concat(
+            docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+          );
+          this.loadingOlderProfile = false;
+        });
+      });
+  };
+
+  deletePet = (id) =>
+    this.database
+      .collection("puppies")
+      .doc(id)
+      .delete()
+      .then(() => {
+        runInAction(() => {
+          this.profileData = this.profileData.filter((pet) => pet.id !== id);
+        });
+      });
+
+  addPet = (data) =>
+    this.database.collection("puppies").add({
+      ...data,
+      owner: this.user.uid,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
 
   signIn = (email, password) =>
     new Promise((resolve) =>

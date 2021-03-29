@@ -1,45 +1,9 @@
-.user-panel {
-  width: 80%;
-  left: 10%;
-  background-color: #f2f2f2;
-  position: absolute;
-  top: 64px;
-  padding: 8px;
-}
-
-.auth-btn {
-  background-color: #555;
-  color: white;
-  float: right;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 0;
-  font-size: 17px;
-  width: 200px;
-  height: 50px;
-  text-decoration: none;
-  text-align: center;
-}
-
-.auth-btn:not(first-child) {
-  margin-left: 10px;
-}
-
-.auth-btn.active {
-  background-color: transparent !important;
-}
-
-.auth-btn:hover {
-  background-color: #777;
-}
-
-.parent-profile-wrap {
+.parent-home-wrap {
   width: 80%;
   left: 10%;
   /*background-color: #f2f2f2;*/
   position: absolute;
-  top: 150px;
+  top: 64px;
 }
 
 .container {
