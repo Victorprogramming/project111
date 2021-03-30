@@ -95,6 +95,53 @@ class Store {
       });
   };
 
+  searchData = [];
+  lastSearch = null;
+  search = (breed, age) => {
+    runInAction(() => {
+      this.lastSearch = { breed, age };
+    });
+    this.database
+      .collection("puppies")
+      .where("breed", ">=", breed)
+      .where("age", "==", age)
+      .orderBy("breed", "asc")
+      .orderBy("timestamp", "desc")
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.searchData = docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        });
+      });
+  };
+
+  loadingOlderSearch = false;
+  loadOlderSearch = () => {
+    if (this.loadOlderSearch) {
+      return;
+    }
+
+    runInAction(() => (this.loadingOlderSearch = true));
+    this.database
+      .collection("puppies")
+      .where("breed", ">=", this.store.lastSearch.breed)
+      .where("age", "==", this.store.lastSearch.age)
+      .orderBy("breed", "asc")
+      .orderBy("timestamp", "desc")
+      .startAfter(this.searchData[this.searchData.length - 1].timestamp)
+      .limit(20)
+      .get()
+      .then(({ docs }) => {
+        runInAction(() => {
+          this.searchData = this.searchData.concat(
+            docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+          );
+          this.loadOlderSearch = false;
+        });
+      });
+  };
+
   deletePet = (id) =>
     this.database
       .collection("puppies")

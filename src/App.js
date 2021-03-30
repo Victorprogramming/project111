@@ -6,6 +6,7 @@ import SignIn from "./pages/auth/signin";
 import SignUp from "./pages/auth/signup";
 import Profile from "./pages/profile";
 import Posts from "./pages/Posts/Posts";
+import searchBar from "./pages/searchBar/searchBar";
 
 const App = () => (
   <Router>
@@ -16,6 +17,7 @@ const App = () => (
       <Route path="/sign-up" component={SignUp} />
       <Route path="/profile/:id" component={Profile} />
       <Route path="/add" component={Posts} />
+      <Route path="/search" component={searchBar} />
     </Switch>
   </Router>
 );

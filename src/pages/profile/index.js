@@ -68,7 +68,7 @@ const Profile = () => {
         <div className="container">
           {profileData.map((pet, i) => {
             const { id, description, phone, breed } = pet;
-            const { image, name, owner, location } = pet;
+            const { image, name, owner, location, age } = pet;
             return (
               <div key={id} className="card">
                 <div className="face face1">
@@ -103,14 +103,14 @@ const Profile = () => {
                 <div className="face face2">
                   <div className="content">
                     <h3>{name}</h3>
-                    <h4>{breed}</h4>
+                    <h4>Age: {age}</h4>
+                    <h4>Breed: {breed}</h4>
                     <p>
-                      <b>{location}</b>
+                      Location: <b>{location}</b>
                     </p>
                     <p>
-                      <b>{phone}</b>
+                      Phone: <b>{phone}</b>
                     </p>
-                    <br />
                     <p>{description}</p>
                     <h3>
                       <Link to={`/profile/${owner}`}>Check owner posts</Link>
